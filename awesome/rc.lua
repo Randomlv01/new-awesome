@@ -642,7 +642,7 @@ client.connect_signal("manage", function (c)
     c.maximized = false
     c.maximized_vertical = false
     c.maximized_horizontal = false
-    c.fullscreen = false
+--    c.fullscreen = false
     c.size_hints_honor = false
 
     if awesome.startup
