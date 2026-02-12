@@ -582,15 +582,18 @@ awful.rules.rules = {
                      buttons = clientbuttons,
                      screen = awful.screen.preferred,
                      placement = awful.placement.no_overlap+awful.placement.no_offscreen,
-
-				     switchtotag = false
+		     switchtotag = true,
+ 		     size_hints_honor = false
      }
     },
+
+    { rule = { class = "firefox" },
+      properties = { floating = false, switchtotag = true } },
+
 
     -- Floating clients.
     { rule_any = {
         instance = {
-          "DTA",  -- Firefox addon DownThemAll.
           "copyq",  -- Includes session name in class.
           "pinentry",
         },
@@ -616,7 +619,7 @@ awful.rules.rules = {
           "ConfigManager",  -- Thunderbird's about:config.
           "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
         }
-      }, properties = { floating = true }},
+      }, properties = { floating = false }},
 
     -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" }
@@ -634,15 +637,29 @@ awful.rules.rules = {
 client.connect_signal("manage", function (c)
     -- Set the windows at the slave,
     -- i.e. put it at the end of others instead of setting it master.
-    -- if not awesome.startup then awful.client.setslave(c) end
+    if not awesome.startup then awful.client.setslave(c) end
+
+    c.maximized = false
+    c.maximized_vertical = false
+    c.maximized_horizontal = false
+    c.fullscreen = false
+    c.size_hints_honor = false
 
     if awesome.startup
       and not c.size_hints.user_position
       and not c.size_hints.program_position then
-        -- Prevent clients from being unreachable after screen count changes.
+      -- Prevent clients from being unreachable after screen count changes.
         awful.placement.no_offscreen(c)
     end
 end)
+
+
+client.connect_signal("property::maximized", function(c)
+    if c.maximized then
+        c.maximized = false
+    end
+end)
+
 
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
 client.connect_signal("request::titlebars", function(c)
@@ -698,8 +715,8 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 awful.spawn.with_shell("picom --daemon &")
 --awful.spawn.with_shell("/home/random/.xcompmgr")
 
-client.connect_signal("manage", function(c)
-		if not awesome.startup then
-				awful.client.setslave(c)
-		end
-end)
+--client.connect_signal("manage", function(c)
+--		if not awesome.startup then
+--				awful.client.setslave(c)
+--		end
+--end)
